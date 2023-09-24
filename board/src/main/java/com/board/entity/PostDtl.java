@@ -1,2 +1,4 @@
-package com.board.entity;public class PostDtl {
+package com.board.entity;
+
+public class PostDtl {
 }

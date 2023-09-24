@@ -1,4 +1,6 @@
 package com.board.comment.service.impl;
 
-public class CommentServiceImpl {
+import com.board.comment.service.CommentService;
+
+public class CommentServiceImpl  implements CommentService {
 }

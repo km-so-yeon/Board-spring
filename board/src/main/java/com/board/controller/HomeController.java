@@ -1,2 +1,24 @@
-package com.board.controller;public class HomeController {
+package com.board.controller;
+
+import com.board.board.service.BoardService;
+import com.board.entity.Board;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
+import java.util.List;
+
+@RestController
+public class HomeController {
+
+    private final BoardService boardService;
+
+    HomeController(BoardService boardService) {
+        this.boardService = boardService;
+    }
+
+    @GetMapping(value="/")
+    public List<Board> main(HttpSession session) {
+        return boardService.getBoardList(session);
+    }
 }

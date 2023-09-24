@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.board.member.mapper.MemberMapper">
+
+    <select id="selectMemberByEmail" resultType="Member">
+        SELECT member_id
+             , email
+             , password
+             , nickname
+             , created_at
+             , updated_at
+             , leave_at
+             , role_id
+          FROM member
+         WHERE email = #{email}
+    </select>
+
+    <insert id="insertMember" parameterType="MemberSignUpDto">
+        INSERT INTO member
+            (
+              email
+            , password
+            , nickname
+            , role_id
+            )
+        VALUES
+            (
+              #{email}
+            , #{password}
+            , #{nickname}
+            , #{roleId}
+            )
+    </insert>
+
+    <select id="selectMemberById" parameterType="int" resultType="Member">
+        SELECT member_id
+             , email
+             , password
+             , nickname
+             , created_at
+             , updated_at
+             , leave_at
+             , role_id
+          FROM member
+         WHERE member_id = #{memberId}
+    </select>
+</mapper>

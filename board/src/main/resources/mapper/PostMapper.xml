@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.board.post.mapper.PostMapper">
+
+    <select id="selectPostList" parameterType="int" resultType="ArrayList">
+        SELECT p.post_id
+             , p.board_id
+             , p.title
+             , p.read_cnt
+             , p.comment_cnt
+             , p.use_yn
+             , p.created_at
+             , m.nickname as created_by_nm
+          FROM post p
+               LEFT OUTER JOIN member m
+                            ON p.created_by = m.member_id
+         WHERE p.board_id = #{boardId}
+    </select>
+
+</mapper>
