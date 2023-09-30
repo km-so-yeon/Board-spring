@@ -12,6 +12,8 @@ public class Member {
 
     private String nickname;
 
+    private String ip;
+
     private Date createdAt;
 
     private Date updatedAt;
@@ -30,7 +32,15 @@ public class Member {
 
     public int getRoleId() { return this.roleId; }
 
-    public void setRoleIdGuest() { this.roleId = 1; }
-
     public void clearPassword() { this.password = null; }
+
+    public void setEmail(String email) { this.email = email; }
+
+    public void setPassword(String password) { this.password = password; }
+
+    public boolean isExist() {
+        // 멤버Id가 0이면 존재하지 않는 사용자이다.
+        if(this.memberId == 0) return false;
+        return true;
+    }
 }

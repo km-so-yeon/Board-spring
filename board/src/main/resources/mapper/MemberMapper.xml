@@ -16,20 +16,23 @@
     </select>
 
     <insert id="insertMember" parameterType="MemberSignUpDto">
-        INSERT INTO member
-            (
-              email
-            , password
-            , nickname
-            , role_id
-            )
+        INSERT
+          INTO member
+             (
+               email
+             , password
+             , nickname
+             , role_id
+             , ip
+             )
         VALUES
-            (
-              #{email}
-            , #{password}
-            , #{nickname}
-            , #{roleId}
-            )
+             (
+               #{email}
+             , #{password}
+             , #{nickname}
+             , #{roleId}
+             , #{ip}
+             )
     </insert>
 
     <select id="selectMemberById" parameterType="int" resultType="Member">
@@ -44,4 +47,18 @@
           FROM member
          WHERE member_id = #{memberId}
     </select>
+
+    <insert id="insertGuest" parameterType="String">
+        INSERT
+          INTO member
+             (
+               ip
+             , role_id
+             )
+        VALUES
+             (
+               #{ip}
+             , 1
+             )
+    </insert>
 </mapper>

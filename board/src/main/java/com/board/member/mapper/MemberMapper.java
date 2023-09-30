@@ -13,4 +13,8 @@ public interface MemberMapper {
     void insertMember(MemberSignUpDto memberSignUpDto);
 
     Member selectMemberById(@Param("memberId")int memberId);
+
+    Member selectMemberByIp(@Param("ip")String ip);
+
+    void insertGuest(@Param("ip")String ip);
 }

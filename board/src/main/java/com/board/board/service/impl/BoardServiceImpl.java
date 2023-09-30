@@ -5,9 +5,11 @@ import com.board.board.service.BoardService;
 import com.board.entity.Board;
 import com.board.entity.Member;
 import com.board.member.mapper.MemberMapper;
+import com.board.member.service.MemberService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -17,27 +19,26 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardMapper boardMapper;
 
-    private final MemberMapper memberMapper;
+    private final MemberService memberService;
 
-    BoardServiceImpl(BoardMapper boardMapper, MemberMapper memberMapper) {
+
+    BoardServiceImpl(BoardMapper boardMapper, MemberService memberService) {
         this.boardMapper = boardMapper;
-        this.memberMapper = memberMapper;
+        this.memberService = memberService;
     }
 
     @Override
-    public List<Board> getBoardList(HttpSession session) {
+    public List<Board> getBoardList(HttpSession session, HttpServletRequest request) {
 
         // 권한에 따라 가져오는 게시판 리스트가 다르다.
         // 현재 사용자의 정보 조회하기
-        int memberId = (Integer)session.getAttribute("memberId");
-        Member member = memberMapper.selectMemberById(memberId);
-
-        if(member == null) {
-            // 로그인되어있지 않을 경우 비회원으로 설정해서 조회한다.
-            member = new Member();
-            member.setRoleIdGuest();
-        }
+        Member member = memberService.getMemberInfo(session, request);
 
         return boardMapper.selectBoardListByRoleId(member.getRoleId());
+    }
+
+    @Override
+    public boolean haveBoardPermission(int boardId, Member member) {
+        return boardMapper.selectBoardPermission(boardId, member.getMemberId());
     }
 }

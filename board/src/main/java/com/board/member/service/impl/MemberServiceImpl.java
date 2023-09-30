@@ -10,8 +10,12 @@ import com.board.member.mapper.MemberMapper;
 import com.board.member.service.MemberService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -24,14 +28,22 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void signUp(MemberSignUpDto memberSignUpDto) throws BaseException{
-        // 같은 이메일의 회원이 존재하는지 확인
-        Member member = memberMapper.selectMemberByEmail(memberSignUpDto.getEmail());
+    public void signUp(MemberSignUpDto memberSignUpDto, HttpServletRequest request) throws BaseException{
 
-        if (member != null) {
+        // 같은 이메일의 회원이 존재하는지 확인
+        if (memberMapper.selectMemberByEmail(memberSignUpDto.getEmail()) != null) {
             // exception 이미 등록된 회원입니다
             throw new BaseException(MEMBER_DUPLICATE_EMAIL);
         }
+        // 같은 IP의 회원이 존재하는지 확인
+        String clientIp = this.getClientIp(request);
+        if (memberMapper.selectMemberByIp(clientIp) != null) {
+            // exception 이미 등록된 회원입니다
+            throw new BaseException(MEMBER_DUPLICATE_IP);
+        }
+
+        // ip 설정
+        memberSignUpDto.setIp(clientIp);
 
         // 회원 등록
         memberMapper.insertMember(memberSignUpDto);
@@ -39,6 +51,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member login(MemberLoginDto memberLoginDto) throws BaseException{
+
         // 회원 이메일, 비밀번호 확인
         Member member = memberMapper.selectMemberByEmail(memberLoginDto.getEmail());
 
@@ -52,6 +65,57 @@ public class MemberServiceImpl implements MemberService {
         }
         member.clearPassword(); // 비밀번호 제거 후 리턴
         return member;
+    }
+
+    @Override
+    public Member getMemberInfo(HttpSession session, HttpServletRequest request) throws BaseException {
+
+        Member member = null;
+
+        Integer memberId = (Integer)session.getAttribute("memberId");
+        if(memberId != null) {
+            member = memberMapper.selectMemberById(memberId);
+
+        } else {
+            String ip = this.getClientIp(request);
+            member = memberMapper.selectMemberByIp(ip);
+
+            if(member == null) {
+                memberMapper.insertGuest(ip);
+                member = memberMapper.selectMemberByIp(ip);
+            }
+
+        }
+
+        return member;
+    }
+
+    @Override
+    public String getClientIp(HttpServletRequest request) {
+        String clientIp = null;
+        boolean isIpInHeader = false;
+
+        List<String> headerList = new ArrayList<>();
+        headerList.add("X-Forwarded-For");
+        headerList.add("HTTP_CLIENT_IP");
+        headerList.add("HTTP_X_FORWARDED_FOR");
+        headerList.add("HTTP_X_FORWARDED");
+        headerList.add("HTTP_FORWARDED_FOR");
+        headerList.add("HTTP_FORWARDED");
+        headerList.add("Proxy-Client-IP");
+        headerList.add("WL-Proxy-Client-IP");
+        headerList.add("HTTP_VIA");
+        headerList.add("IPV6_ADR");
+
+        for (String header : headerList) {
+            clientIp = request.getHeader(header);
+            if (StringUtils.hasText(clientIp) && !clientIp.equals("unknown")) {
+                isIpInHeader = true;
+                break;
+            }
+        }
+
+        return clientIp;
     }
 
 }

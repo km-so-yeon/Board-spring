@@ -4,9 +4,18 @@ public enum BaseStatus {
     SUCCESS(true, 0, "요청에 성공하였습니다."),
 
     MEMBER_DUPLICATE_EMAIL(false, 1000, "이미 등록된 회원입니다."),
-    MEMBER_NON_EXIST(false, 1001, "존재하지 않는 회원입니다."),
+    MEMBER_DUPLICATE_IP(false, 1001, "이미 등록된 회원입니다."),
+    MEMBER_NON_EXIST(false, 1002, "존재하지 않는 회원입니다."),
+    MEMBER_PASSWORD_WORNG(false, 1003, "비밀번호가 틀립니다."),
 
-    MEMBER_PASSWORD_WORNG(false, 1002, "비밀번호가 틀립니다.")
+
+    GUEST_IS_BLANK(false, 1004, "이메일 및 비밀번호를 입력해주세요."),
+
+    BOARD_NOT_PERMISSION(false, 1004, "해당 게시판에 권한이 없습니다."),
+
+    POST_NON_EXIST(false, 3000, "게시물이 존재하지 않습니다."),
+
+    POST_CREATED_BY_NOT_MATCH(false, 3001, "작성자 정보와 일치하지 않습니다.")
 
     ;
 

@@ -1,5 +1,6 @@
 package com.board.controller;
 
+import com.board.config.response.BaseResponse;
 import com.board.entity.Post;
 import com.board.post.service.PostService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ public class BoardController {
     }
 
     @GetMapping
-    public List<Post> getPostList(@PathVariable("boardId") int boardId) {
-        return postService.getPostList(boardId);
+    public BaseResponse<List<Post>> getPostList(@PathVariable("boardId") int boardId) {
+        return new BaseResponse<>(postService.getPostList(boardId));
     }
 }

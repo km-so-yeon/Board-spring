@@ -8,8 +8,11 @@ public class MemberSignUpDto {
 
     private String nickname;
 
+    private String ip;
+
     private int roleId;
 
     public String getEmail() { return this.email; }
 
+    public void setIp(String ip) { this.ip = ip; }
 }

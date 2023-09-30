@@ -1,16 +1,21 @@
 package com.board.post.service.impl;
 
+import com.board.board.service.BoardService;
+import com.board.config.response.BaseException;
 import com.board.entity.Member;
 import com.board.entity.Post;
-import com.board.member.mapper.MemberMapper;
+import com.board.post.dto.PostCreatedByDto;
 import com.board.post.dto.PostDto;
+import com.board.post.dto.PostModifyDto;
 import com.board.post.mapper.PostMapper;
 import com.board.post.service.PostService;
+import com.board.view.ViewService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
+
+import static com.board.constant.BaseStatus.*;
 
 @Service
 @Transactional
@@ -18,11 +23,14 @@ public class PostServiceImpl implements PostService {
 
     private final PostMapper postMapper;
 
-    private final MemberMapper memberMapper;
+    private final ViewService viewService;
 
-    PostServiceImpl(PostMapper postMapper, MemberMapper memberMapper) {
+    private final BoardService boardService;
+
+    PostServiceImpl(PostMapper postMapper, ViewService viewService, BoardService boardService) {
         this.postMapper = postMapper;
-        this.memberMapper = memberMapper;
+        this.viewService = viewService;
+        this.boardService = boardService;
     }
 
     @Override
@@ -31,17 +39,70 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void addPostDtl(PostDto postDto, HttpSession session) {
+    public Post getPostDtl(int boardId, int postId, Member member) throws BaseException {
 
-        // 사용자 정보 가져오기
-        int memberId = (Integer)session.getAttribute("memberId");
-        Member member = memberMapper.selectMemberById(memberId);
-
-        // 비회원 등록이 가능해야하므로 사용자 없을 경우 생성
-        if(member == null) {
-            member = new Member();
-            member.setRoleIdGuest();
+        // 권한 확인하기
+        if(boardService.haveBoardPermission(boardId, member)) {
+            throw new BaseException(BOARD_NOT_PERMISSION);
         }
+
+        // 조회수 올리기
+        postMapper.updatePostReadCnt(boardId, postId);
+        // 조회 테이블 insert
+        viewService.insertViewPost(boardId, postId, member);
+
+        return postMapper.selectPost(boardId, postId);
+    }
+
+    @Override
+    public void addPostDtl(PostDto postDto, Member member) throws BaseException {
+
+        // 권한 확인하기
+        if(boardService.haveBoardPermission(postDto.getBoardId(), member)) {
+            throw new BaseException(BOARD_NOT_PERMISSION);
+        }
+
+        postMapper.insertPost(postDto, member.getMemberId());
+    }
+
+    @Override
+    public void modifyPostDtl(PostModifyDto postModifyDto, Member member) throws BaseException {
+
+        // 권한 확인하기
+        if(boardService.haveBoardPermission(postModifyDto.getBoardId(), member)) {
+            throw new BaseException(BOARD_NOT_PERMISSION);
+        }
+
+        // 게시글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
+        PostCreatedByDto postCreatedByDto = postMapper.selectPostCreatedBy(postModifyDto.getBoardId(), postModifyDto.getPostId());
+        if(postCreatedByDto == null) {
+            throw new BaseException(POST_NON_EXIST);
+        }
+        if(!postCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
+            throw new BaseException(POST_CREATED_BY_NOT_MATCH);
+        }
+
+        postMapper.updatePost(postModifyDto, member.getMemberId());
+    }
+
+    @Override
+    public void deletePostDtl(int boardId, int postId, Member member) throws BaseException {
+
+        // 권한 확인하기
+        if(boardService.haveBoardPermission(boardId, member)) {
+            throw new BaseException(BOARD_NOT_PERMISSION);
+        }
+
+        // 게시글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
+        PostCreatedByDto postCreatedByDto = postMapper.selectPostCreatedBy(boardId, postId);
+        if(postCreatedByDto == null) {
+            throw new BaseException(POST_NON_EXIST);
+        }
+        if(!postCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
+            throw new BaseException(POST_CREATED_BY_NOT_MATCH);
+        }
+
+        postMapper.deletePost(boardId, postId);
     }
 
 

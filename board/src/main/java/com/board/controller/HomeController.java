@@ -1,10 +1,12 @@
 package com.board.controller;
 
 import com.board.board.service.BoardService;
+import com.board.config.response.BaseResponse;
 import com.board.entity.Board;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class HomeController {
     }
 
     @GetMapping(value="/")
-    public List<Board> main(HttpSession session) {
-        return boardService.getBoardList(session);
+    public BaseResponse<List<Board>> main(HttpSession session, HttpServletRequest request) {
+        return new BaseResponse<>(boardService.getBoardList(session, request));
     }
 }

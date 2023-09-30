@@ -17,4 +17,78 @@
          WHERE p.board_id = #{boardId}
     </select>
 
+    <select id="selectPost" resultType="Post">
+        SELECT p.post_id
+             , p.board_id
+             , p.title
+             , p.read_cnt
+             , p.comment_cnt
+             , p.use_yn
+             , p.created_at
+             , m.nickname as created_by_nm
+          FROM post p
+               LEFT OUTER JOIN member m
+                            ON p.created_by = m.member_id
+         WHERE p.board_id = #{boardId}
+           AND p.post_id = #{postId}
+    </select>
+
+    <update id="updatePostReadCnt">
+        UPDATE post
+           SET read_cnt = read_cnt + 1
+         WHERE board_id = #{boardId}
+           AND post_id = #{postId}
+    </update>
+
+    <insert id="insertPost">
+        INSERT
+          INTO post
+             (
+               board_id
+             , title
+             , content
+             , read_cnt
+             , comment_cnt
+             , use_yn
+             , created_by
+             , updated_by
+             )
+        VALUES
+             (
+               #{postDto.boardId}
+             , #{postDto.title}
+             , #{postDto.content}
+             , 0
+             , 0
+             , 'Y'
+             , #{memberId}
+             , #{memberId}
+             )
+    </insert>
+
+    <update id="updatePost">
+        UPDATE post
+           SET title = #{postModifyDto.title}
+             , content = #{postModifyDto.content}
+             , updated_at = now()
+             , updated_by = #{memberId}
+         WHERE board_id = #{postModifyDto.boardId}
+           AND post_id = #{postModifyDto.postId}
+    </update>
+
+    <select id="selectPostCreatedBy" resultType="PostCreatedByDto">
+        SELECT m.email
+             , m.password
+          FROM post p
+               LEFT OUTER JOIN member m
+                            ON p.created_by = m.member_id
+         WHERE p.board_id = #{boardId}
+           AND p.post_id = #{postId}
+    </select>
+
+    <delete id="deletePost">
+        DELETE FROM post
+         WHERE board_id = #{boardId}
+           AND post_id = #{postId}
+    </delete>
 </mapper>

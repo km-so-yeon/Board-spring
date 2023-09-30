@@ -18,4 +18,13 @@
          WHERE role_id in (#{roleId}, 3)    /* 3 == BOTH */
     </select>
 
+    <select id="selectBoardPermission" resultType="boolean">
+        SELECT IF(COUNT(*) = 1, 1, 0)
+          FROM board b
+               JOIN member m
+                 ON b.role_id = m.role_id
+         WHERE b.board_id = #{boardId}
+           AND m.member_id = #{memberId}
+    </select>
+
 </mapper>

@@ -1,6 +1,7 @@
 package com.board.controller;
 
 import com.board.config.response.BaseException;
+import com.board.config.response.BaseResponse;
 import com.board.entity.Member;
 import com.board.member.dto.MemberLoginDto;
 import com.board.member.dto.MemberSignUpDto;
@@ -27,8 +28,9 @@ public class MemberController {
      * @param memberSignUpDto
      */
     @PostMapping(value="/sign-up")
-    public void signUp(@RequestBody MemberSignUpDto memberSignUpDto) throws BaseException {
-        memberService.signUp(memberSignUpDto);
+    public void signUp(@RequestBody MemberSignUpDto memberSignUpDto, HttpServletRequest request) throws BaseException {
+
+        memberService.signUp(memberSignUpDto, request);
     }
 
     /**
@@ -38,7 +40,7 @@ public class MemberController {
      * @return
      */
     @PostMapping(value="/login")
-    public Member login(@RequestBody MemberLoginDto memberLoginDto, HttpServletRequest request) throws BaseException {
+    public BaseResponse<Member> login(@RequestBody MemberLoginDto memberLoginDto, HttpServletRequest request) throws BaseException {
         Member member = memberService.login(memberLoginDto);
 
         if(member != null) {
@@ -47,7 +49,7 @@ public class MemberController {
             session.setAttribute("email", member.getEmail());
         }
 
-        return member;
+        return new BaseResponse<>(member);
     }
 
     /**

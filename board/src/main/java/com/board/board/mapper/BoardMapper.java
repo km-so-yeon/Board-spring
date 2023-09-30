@@ -11,4 +11,6 @@ public interface BoardMapper {
 
     List<Board> selectBoardListByRoleId(@Param("roleId") int roleId);
 
+    boolean selectBoardPermission(@Param("boardId")int boardId, @Param("memberId")int memberId);
+
 }
