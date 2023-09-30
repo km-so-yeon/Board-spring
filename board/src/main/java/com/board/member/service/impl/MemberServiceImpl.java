@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 public class MemberServiceImpl implements MemberService {
 
     private final MemberMapper memberMapper;
@@ -28,6 +27,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void signUp(MemberSignUpDto memberSignUpDto, HttpServletRequest request) throws BaseException{
 
         // 같은 이메일의 회원이 존재하는지 확인
@@ -50,6 +50,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Member login(MemberLoginDto memberLoginDto) throws BaseException{
 
         // 회원 이메일, 비밀번호 확인
@@ -68,6 +69,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Member getMemberInfo(HttpSession session, HttpServletRequest request) throws BaseException {
 
         Member member = null;
@@ -93,7 +95,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public String getClientIp(HttpServletRequest request) {
         String clientIp = null;
-        boolean isIpInHeader = false;
 
         List<String> headerList = new ArrayList<>();
         headerList.add("X-Forwarded-For");
@@ -110,7 +111,6 @@ public class MemberServiceImpl implements MemberService {
         for (String header : headerList) {
             clientIp = request.getHeader(header);
             if (StringUtils.hasText(clientIp) && !clientIp.equals("unknown")) {
-                isIpInHeader = true;
                 break;
             }
         }

@@ -18,7 +18,6 @@ import java.util.List;
 import static com.board.constant.BaseStatus.*;
 
 @Service
-@Transactional
 public class PostServiceImpl implements PostService {
 
     private final PostMapper postMapper;
@@ -34,11 +33,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Post> getPostList(int boardId) {
         return postMapper.selectPostList(boardId);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Post getPostDtl(int boardId, int postId, Member member) throws BaseException {
 
         // 권한 확인하기
@@ -55,6 +56,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addPostDtl(PostDto postDto, Member member) throws BaseException {
 
         // 권한 확인하기
@@ -66,6 +68,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyPostDtl(PostModifyDto postModifyDto, Member member) throws BaseException {
 
         // 권한 확인하기
@@ -86,6 +89,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deletePostDtl(int boardId, int postId, Member member) throws BaseException {
 
         // 권한 확인하기

@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Service
-@Transactional
 public class BoardServiceImpl implements BoardService {
 
     private final BoardMapper boardMapper;
@@ -28,6 +27,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Board> getBoardList(HttpSession session, HttpServletRequest request) {
 
         // 권한에 따라 가져오는 게시판 리스트가 다르다.
@@ -38,6 +38,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean haveBoardPermission(int boardId, Member member) {
         return boardMapper.selectBoardPermission(boardId, member.getMemberId());
     }

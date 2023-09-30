@@ -39,13 +39,13 @@
           INTO view
              (
                view_cd
-             , post_id
+             , comment_id
              , member_id
              )
         VALUES
              (
-               'POST'
-             , #{postId}
+               'COMMENT'
+             , #{commentId}
              , #{memberId}
              )
     </insert>
