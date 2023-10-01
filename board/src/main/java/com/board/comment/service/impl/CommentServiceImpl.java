@@ -11,7 +11,9 @@ import com.board.entity.Board;
 import com.board.entity.Comment;
 import com.board.entity.Member;
 import com.board.post.dto.PostCreatedByDto;
+import com.board.post.mapper.PostMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -24,17 +26,22 @@ public class CommentServiceImpl implements CommentService {
 
     private final BoardService boardService;
 
-    CommentServiceImpl(CommentMapper commentMapper, BoardService boardService) {
+    private final PostMapper postMapper;
+
+    CommentServiceImpl(CommentMapper commentMapper, BoardService boardService, PostMapper postMapper) {
         this.commentMapper = commentMapper;
         this.boardService = boardService;
+        this.postMapper = postMapper;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ArrayList<Comment> getCommentList(int boardId, int postId) {
         return commentMapper.selectCommentList(boardId, postId);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addCommentDtl(CommentAddDto commentAddDto, Member member) {
 
         // 권한 확인하기
@@ -42,10 +49,14 @@ public class CommentServiceImpl implements CommentService {
             throw new BaseException(BOARD_NOT_PERMISSION);
         }
 
+        // 댓글 수 추가하기
+        postMapper.plusPostCommentCnt(commentAddDto.getBoardId(), commentAddDto.getPostId());
+
         commentMapper.insertComment(commentAddDto, member.getMemberId());
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyCommentDtl(CommentModifyDto commentModifyDto, Member member) {
 
         // 권한 확인하기
@@ -66,6 +77,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteCommentDtl(int boardId, int postId, int commentId, Member member) {
 
         // 권한 확인하기
@@ -81,6 +93,9 @@ public class CommentServiceImpl implements CommentService {
         if(!commentCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
             throw new BaseException(COMMENT_CREATED_BY_NOT_MATCH);
         }
+
+        // 댓글 수 빼기
+        postMapper.plusPostCommentCnt(boardId, postId);
 
         commentMapper.deleteComment(postId, commentId, member.getMemberId());
     }
