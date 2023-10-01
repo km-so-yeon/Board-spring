@@ -86,9 +86,12 @@
            AND p.post_id = #{postId}
     </select>
 
-    <delete id="deletePost">
-        DELETE FROM post
+    <update id="deletePost">
+        UPDATE post
+           SET use_yn = 'N'
+             , update_at = now()
+             , update_by = #{memberId}
          WHERE board_id = #{boardId}
            AND post_id = #{postId}
-    </delete>
+    </update>
 </mapper>

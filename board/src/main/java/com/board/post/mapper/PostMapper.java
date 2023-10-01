@@ -24,5 +24,5 @@ public interface PostMapper {
 
     PostCreatedByDto selectPostCreatedBy(@Param("boardId")int boardId, @Param("postId")int postId);
 
-    void deletePost(@Param("boardId")int boardId, @Param("postId")int postId);
+    void deletePost(@Param("boardId")int boardId, @Param("postId")int postId, @Param("memberId")int memberId);
 }

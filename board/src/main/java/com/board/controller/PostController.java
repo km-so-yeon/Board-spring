@@ -33,8 +33,7 @@ public class PostController {
     @GetMapping(value="/{postId}")
     public BaseResponse<Post> getPostDtl(@PathVariable("boardId") int boardId
                          , @PathVariable("postId") int postId
-                         , HttpSession session
-                         , HttpServletRequest request) {
+                         , HttpSession session, HttpServletRequest request) {
 
         // 현재 사용자 정보 가져오기
         Member member = memberService.getMemberInfo(session, request);
@@ -45,11 +44,9 @@ public class PostController {
     }
 
     @PostMapping
-    public void addPostDtl(@PathVariable("boardId") int boardId
-                         , @RequestBody PostDto postDto
+    public BaseResponse<Object> addPostDtl(@RequestBody PostDto postDto
                          , @RequestBody GuestDto guestDto
-                         , HttpSession session
-                         , HttpServletRequest request) throws BaseException {
+                         , HttpSession session, HttpServletRequest request) throws BaseException {
 
         // 회원 정보가 있는지 확인
         Member member = memberService.getMemberInfo(session, request);
@@ -65,13 +62,13 @@ public class PostController {
         }
 
         postService.addPostDtl(postDto, member);
+        return new BaseResponse<>(null);
     }
 
     @PutMapping(value="/{postId}")
-    public void modifyPostDtl(@RequestBody PostModifyDto postModifyDto
+    public BaseResponse<Object> modifyPostDtl(@RequestBody PostModifyDto postModifyDto
                             , @RequestBody GuestDto guestDto
-                            , HttpSession session
-                            , HttpServletRequest request) throws BaseException {
+                            , HttpSession session, HttpServletRequest request) throws BaseException {
 
         // 회원 정보가 있는지 확인
         Member member = memberService.getMemberInfo(session, request);
@@ -88,14 +85,15 @@ public class PostController {
         }
 
         postService.modifyPostDtl(postModifyDto, member);
+
+        return new BaseResponse<>(null);
     }
 
     @DeleteMapping(value="/{postId}")
-    public void deletePostDtl(@PathVariable("boardId") int boardId
+    public BaseResponse<Object> deletePostDtl(@PathVariable("boardId") int boardId
                             , @PathVariable("postId") int postId
                             , @RequestBody GuestDto guestDto
-                            , HttpSession session
-                            , HttpServletRequest request) throws BaseException {
+                            , HttpSession session, HttpServletRequest request) throws BaseException {
 
         // 회원 정보가 있는지 확인
         Member member = memberService.getMemberInfo(session, request);
@@ -112,7 +110,7 @@ public class PostController {
         }
 
         postService.deletePostDtl(boardId, postId, member);
-
+        return new BaseResponse<>(null);
     }
 
 }

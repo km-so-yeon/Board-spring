@@ -19,4 +19,32 @@ public class Post {
     private Date createdAt;
 
     private String createdByNm;
+
+    public int getPostId() { return postId; }
+
+    public int getBoardId() { return boardId; }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public int getReadCnt() {
+        return readCnt;
+    }
+
+    public int getCommentCnt() {
+        return commentCnt;
+    }
+
+    public String getUseYn() {
+        return useYn;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public String getCreatedByNm() {
+        return createdByNm;
+    }
 }

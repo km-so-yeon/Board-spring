@@ -106,7 +106,7 @@ public class PostServiceImpl implements PostService {
             throw new BaseException(POST_CREATED_BY_NOT_MATCH);
         }
 
-        postMapper.deletePost(boardId, postId);
+        postMapper.deletePost(boardId, postId, member.getMemberId());
     }
 
 

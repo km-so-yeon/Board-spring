@@ -30,6 +30,14 @@ public class Member {
 
     public String getNickname() { return this.nickname; }
 
+    public String getIp() { return this.ip; }
+
+    public Date getCreatedAt() { return this.createdAt; }
+
+    public Date getUpdatedAt() { return this.updatedAt; }
+
+    public Date getLeaveAt() { return this.leaveAt; }
+
     public int getRoleId() { return this.roleId; }
 
     public void clearPassword() { this.password = null; }

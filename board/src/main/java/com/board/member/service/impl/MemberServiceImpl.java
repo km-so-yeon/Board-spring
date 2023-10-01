@@ -65,6 +65,7 @@ public class MemberServiceImpl implements MemberService {
             throw new BaseException(MEMBER_PASSWORD_WORNG);
         }
         member.clearPassword(); // 비밀번호 제거 후 리턴
+
         return member;
     }
 

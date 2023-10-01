@@ -15,7 +15,11 @@ public enum BaseStatus {
 
     POST_NON_EXIST(false, 3000, "게시물이 존재하지 않습니다."),
 
-    POST_CREATED_BY_NOT_MATCH(false, 3001, "작성자 정보와 일치하지 않습니다.")
+    POST_CREATED_BY_NOT_MATCH(false, 3001, "게시물 작성자 정보와 일치하지 않습니다."),
+
+    COMMENT_NON_EXIST(false, 4000, "댓글이 존재하지 않습니다."),
+
+    COMMENT_CREATED_BY_NOT_MATCH(false, 4001, "댓글 작성자 정보와 일치하지 않습니다."),
 
     ;
 
