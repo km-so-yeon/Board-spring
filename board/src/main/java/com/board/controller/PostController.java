@@ -31,7 +31,7 @@ public class PostController {
     }
 
     @GetMapping(value="/{postId}")
-    public BaseResponse<Post> getPostDtl(@PathVariable("boardId") int boardId
+    public Post getPostDtl(@PathVariable("boardId") int boardId
                          , @PathVariable("postId") int postId
                          , HttpSession session, HttpServletRequest request) {
 
@@ -39,12 +39,11 @@ public class PostController {
         Member member = memberService.getMemberInfo(session, request);
 
         // 게시글 조회하기
-        Post post = postService.getPostDtl(boardId, postId, member);
-        return new BaseResponse<>(post);
+        return postService.getPostDtl(boardId, postId, member);
     }
 
     @PostMapping
-    public BaseResponse<Object> addPostDtl(@RequestBody PostDto postDto
+    public void addPostDtl(@RequestBody PostDto postDto
                          , @RequestBody GuestDto guestDto
                          , HttpSession session, HttpServletRequest request) throws BaseException {
 
@@ -62,11 +61,10 @@ public class PostController {
         }
 
         postService.addPostDtl(postDto, member);
-        return new BaseResponse<>(null);
     }
 
     @PutMapping(value="/{postId}")
-    public BaseResponse<Object> modifyPostDtl(@RequestBody PostModifyDto postModifyDto
+    public void modifyPostDtl(@RequestBody PostModifyDto postModifyDto
                             , @RequestBody GuestDto guestDto
                             , HttpSession session, HttpServletRequest request) throws BaseException {
 
@@ -85,12 +83,10 @@ public class PostController {
         }
 
         postService.modifyPostDtl(postModifyDto, member);
-
-        return new BaseResponse<>(null);
     }
 
     @DeleteMapping(value="/{postId}")
-    public BaseResponse<Object> deletePostDtl(@PathVariable("boardId") int boardId
+    public void deletePostDtl(@PathVariable("boardId") int boardId
                             , @PathVariable("postId") int postId
                             , @RequestBody GuestDto guestDto
                             , HttpSession session, HttpServletRequest request) throws BaseException {
@@ -110,7 +106,6 @@ public class PostController {
         }
 
         postService.deletePostDtl(boardId, postId, member);
-        return new BaseResponse<>(null);
     }
 
 }

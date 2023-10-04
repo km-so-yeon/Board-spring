@@ -1,25 +1,23 @@
 package com.board.constant;
 
 public enum BaseStatus {
-    SUCCESS(true, 0, "요청에 성공하였습니다."),
+    SUCCESS(true, 0, "SUCCESS"),
 
-    MEMBER_DUPLICATE_EMAIL(false, 1000, "이미 등록된 회원입니다."),
-    MEMBER_DUPLICATE_IP(false, 1001, "이미 등록된 회원입니다."),
-    MEMBER_NON_EXIST(false, 1002, "존재하지 않는 회원입니다."),
-    MEMBER_PASSWORD_WORNG(false, 1003, "비밀번호가 틀립니다."),
+    MEMBER_DUPLICATE_EMAIL(false, 1000, "MEMBER_DUPLICATE_EMAIL"),
+    MEMBER_DUPLICATE_IP(false, 1001, "MEMBER_DUPLICATE_IP"),
+    MEMBER_NON_EXIST(false, 1002, "MEMBER_NON_EXIST"),
+    MEMBER_PASSWORD_WORNG(false, 1003, "MEMBER_PASSWORD_WORNG"),
 
 
-    GUEST_IS_BLANK(false, 1004, "이메일 및 비밀번호를 입력해주세요."),
+    GUEST_IS_BLANK(false, 1004, "GUEST_IS_BLANK"),
 
-    BOARD_NOT_PERMISSION(false, 1004, "해당 게시판에 권한이 없습니다."),
+    BOARD_NOT_PERMISSION(false, 1004, "BOARD_NOT_PERMISSION"),
 
-    POST_NON_EXIST(false, 3000, "게시물이 존재하지 않습니다."),
+    POST_NON_EXIST(false, 3000, "POST_NON_EXIST"),
+    POST_CREATED_BY_NOT_MATCH(false, 3001, "POST_CREATED_BY_NOT_MATCH"),
 
-    POST_CREATED_BY_NOT_MATCH(false, 3001, "게시물 작성자 정보와 일치하지 않습니다."),
-
-    COMMENT_NON_EXIST(false, 4000, "댓글이 존재하지 않습니다."),
-
-    COMMENT_CREATED_BY_NOT_MATCH(false, 4001, "댓글 작성자 정보와 일치하지 않습니다."),
+    COMMENT_NON_EXIST(false, 4000, "COMMENT_NON_EXIST"),
+    COMMENT_CREATED_BY_NOT_MATCH(false, 4001, "COMMENT_CREATED_BY_NOT_MATCH"),
 
     ;
 

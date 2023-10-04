@@ -32,15 +32,14 @@ public class CommentController {
     }
 
     @GetMapping
-    public BaseResponse<ArrayList<Comment>> getCommentList(@PathVariable("boardId")int boardId
+    public ArrayList<Comment> getCommentList(@PathVariable("boardId")int boardId
                                                          , @PathVariable("postId")int postId) {
         // TODO 댓글 페이징 처리
-        ArrayList<Comment> comments = commentService.getCommentList(boardId, postId);
-        return new BaseResponse<>(comments);
+        return commentService.getCommentList(boardId, postId);
     }
 
     @PostMapping
-    public BaseResponse<Object> addCommentDtl(@RequestBody CommentAddDto commentAddDto
+    public void addCommentDtl(@RequestBody CommentAddDto commentAddDto
                                             , @RequestBody GuestDto guestDto
                                             , HttpSession session, HttpServletRequest request) {
 
@@ -59,11 +58,10 @@ public class CommentController {
         }
 
         commentService.addCommentDtl(commentAddDto, member);
-        return new BaseResponse<>(null);
     }
 
     @PutMapping(value="/{commentId}")
-    public BaseResponse<Object> updateCommentDtl(@RequestBody CommentModifyDto commentModifyDto
+    public void updateCommentDtl(@RequestBody CommentModifyDto commentModifyDto
                                                , @RequestBody GuestDto guestDto
                                                , HttpSession session, HttpServletRequest request) {
 
@@ -82,11 +80,10 @@ public class CommentController {
         }
 
         commentService.modifyCommentDtl(commentModifyDto, member);
-        return new BaseResponse<>(null);
     }
 
     @DeleteMapping(value="/{commentId}")
-    public BaseResponse<Object> deleteCommentDtl(@PathVariable("boardId") int boardId
+    public void deleteCommentDtl(@PathVariable("boardId") int boardId
                                                , @PathVariable("postId") int postId
                                                , @PathVariable("commentId") int commentId
                                                , @RequestBody GuestDto guestDto
@@ -107,6 +104,5 @@ public class CommentController {
         }
 
         commentService.deleteCommentDtl(boardId, postId, commentId, member);
-        return new BaseResponse<>(null);
     }
 }

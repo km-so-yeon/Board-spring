@@ -20,7 +20,7 @@ public class HomeController {
     }
 
     @GetMapping(value="/")
-    public BaseResponse<List<Board>> main(HttpSession session, HttpServletRequest request) {
-        return new BaseResponse<>(boardService.getBoardList(session, request));
+    public List<Board> main(HttpSession session, HttpServletRequest request) {
+        return boardService.getBoardList(session, request);
     }
 }

@@ -28,11 +28,10 @@ public class MemberController {
      * @param memberSignUpDto
      */
     @PostMapping(value="/sign-up")
-    public BaseResponse<Object> signUp(@RequestBody MemberSignUpDto memberSignUpDto, HttpServletRequest request) throws BaseException {
+    public void signUp(@RequestBody MemberSignUpDto memberSignUpDto, HttpServletRequest request) throws BaseException {
 
         memberService.signUp(memberSignUpDto, request);
 
-        return new BaseResponse<>(null);
     }
 
     /**
@@ -42,7 +41,7 @@ public class MemberController {
      * @return
      */
     @PostMapping(value="/login")
-    public BaseResponse<Member> login(@RequestBody MemberLoginDto memberLoginDto, HttpServletRequest request) throws BaseException {
+    public Member login(@RequestBody MemberLoginDto memberLoginDto, HttpServletRequest request) throws BaseException {
         Member member = memberService.login(memberLoginDto);
 
         if(member != null) {
@@ -51,7 +50,7 @@ public class MemberController {
             session.setAttribute("email", member.getEmail());
         }
 
-        return new BaseResponse<>(member);
+        return member;
     }
 
     /**
@@ -59,8 +58,7 @@ public class MemberController {
      * @param session
      */
     @PostMapping(value="/logout")
-    public BaseResponse<Object> logout(HttpSession session) {
+    public void logout(HttpSession session) {
         session.invalidate();
-        return new BaseResponse<>(null);
     }
 }

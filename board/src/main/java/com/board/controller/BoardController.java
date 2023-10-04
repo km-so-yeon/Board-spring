@@ -21,7 +21,7 @@ public class BoardController {
     }
 
     @GetMapping
-    public BaseResponse<List<Post>> getPostList(@PathVariable("boardId") int boardId) {
-        return new BaseResponse<>(postService.getPostList(boardId));
+    public List<Post> getPostList(@PathVariable("boardId") int boardId) {
+        return postService.getPostList(boardId);
     }
 }
