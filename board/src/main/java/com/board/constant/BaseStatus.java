@@ -19,6 +19,8 @@ public enum BaseStatus {
     COMMENT_NON_EXIST(false, 4000, "COMMENT_NON_EXIST"),
     COMMENT_CREATED_BY_NOT_MATCH(false, 4001, "COMMENT_CREATED_BY_NOT_MATCH"),
 
+    INTERNAL_SERVER_ERROR(false, 5000, "INTERNAL_SERVER_ERROR")
+
     ;
 
     private final boolean isSuccess;
