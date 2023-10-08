@@ -3,6 +3,7 @@ package com.board.comment.service.impl;
 import com.board.board.service.BoardService;
 import com.board.comment.dto.CommentAddDto;
 import com.board.comment.dto.CommentCreatedByDto;
+import com.board.comment.dto.CommentModifyDto;
 import com.board.comment.mapper.CommentMapper;
 import com.board.comment.service.CompositeService;
 import com.board.config.response.BaseException;
@@ -15,7 +16,7 @@ import static com.board.constant.BaseStatus.*;
 
 /**
  * Composite 패턴 서비스 클래스
- * - PostService와 CommentService가 서로 호출하여 순환참조가 되지 않도록 Composite 패턴 사용
+ * - PostService와 CommentService, BoardService가 서로 호출하여 순환참조가 되지 않도록 Composite 패턴 사용
  * - CommentService 기능에서 다른 서비스들을 호출한다.
  */
 @Service
@@ -46,6 +47,27 @@ public class CompositeServiceImpl implements CompositeService {
         postService.plusPostCommentCnt(commentAddDto.getBoardId(), commentAddDto.getPostId());
 
         commentMapper.insertComment(commentAddDto, member.getMemberId());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void modifyCommentDtl(CommentModifyDto commentModifyDto, Member member) {
+
+        // 권한 확인하기
+        if(boardService.haveBoardPermission(commentModifyDto.getBoardId(), member)) {
+            throw new BaseException(BOARD_NOT_PERMISSION);
+        }
+
+        // 댓글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
+        CommentCreatedByDto commentCreatedByDto = commentMapper.selectCommentCreatedBy(commentModifyDto.getPostId(), commentModifyDto.getCommentId());
+        if(commentCreatedByDto == null) {
+            throw new BaseException(COMMENT_NON_EXIST);
+        }
+        if(!commentCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
+            throw new BaseException(COMMENT_CREATED_BY_NOT_MATCH);
+        }
+
+        commentMapper.updateComment(commentModifyDto, member.getMemberId());
     }
 
     @Override

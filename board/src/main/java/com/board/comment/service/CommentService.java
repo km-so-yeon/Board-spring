@@ -11,6 +11,4 @@ public interface CommentService {
 
     ArrayList<Comment> getCommentList(int boardId, int postId);
 
-    void modifyCommentDtl(CommentModifyDto commentModifyDto, Member member);
-
 }

@@ -83,7 +83,7 @@ public class CommentController {
             member.setPassword(guestDto.getPassword());
         }
 
-        commentService.modifyCommentDtl(commentModifyDto, member);
+        compositeService.modifyCommentDtl(commentModifyDto, member);
     }
 
     @DeleteMapping(value="/{commentId}")
