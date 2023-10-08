@@ -26,33 +26,15 @@ public class CommentServiceImpl implements CommentService {
 
     private final BoardService boardService;
 
-    private final PostMapper postMapper;
-
-    CommentServiceImpl(CommentMapper commentMapper, BoardService boardService, PostMapper postMapper) {
+    CommentServiceImpl(CommentMapper commentMapper, BoardService boardService) {
         this.commentMapper = commentMapper;
         this.boardService = boardService;
-        this.postMapper = postMapper;
     }
 
     @Override
     @Transactional(readOnly = true)
     public ArrayList<Comment> getCommentList(int boardId, int postId) {
         return commentMapper.selectCommentList(boardId, postId);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void addCommentDtl(CommentAddDto commentAddDto, Member member) {
-
-        // 권한 확인하기
-        if(boardService.haveBoardPermission(commentAddDto.getBoardId(), member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
-        }
-
-        // 댓글 수 추가하기
-        postMapper.plusPostCommentCnt(commentAddDto.getBoardId(), commentAddDto.getPostId());
-
-        commentMapper.insertComment(commentAddDto, member.getMemberId());
     }
 
     @Override
@@ -76,27 +58,4 @@ public class CommentServiceImpl implements CommentService {
         commentMapper.updateComment(commentModifyDto, member.getMemberId());
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void deleteCommentDtl(int boardId, int postId, int commentId, Member member) {
-
-        // 권한 확인하기
-        if(boardService.haveBoardPermission(boardId, member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
-        }
-
-        // 댓글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
-        CommentCreatedByDto commentCreatedByDto = commentMapper.selectCommentCreatedBy(postId, commentId);
-        if(commentCreatedByDto == null) {
-            throw new BaseException(COMMENT_NON_EXIST);
-        }
-        if(!commentCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
-            throw new BaseException(COMMENT_CREATED_BY_NOT_MATCH);
-        }
-
-        // 댓글 수 빼기
-        postMapper.plusPostCommentCnt(boardId, postId);
-
-        commentMapper.deleteComment(postId, commentId, member.getMemberId());
-    }
 }

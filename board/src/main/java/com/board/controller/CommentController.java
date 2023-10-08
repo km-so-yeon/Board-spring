@@ -3,6 +3,7 @@ package com.board.controller;
 import com.board.comment.dto.CommentAddDto;
 import com.board.comment.dto.CommentModifyDto;
 import com.board.comment.service.CommentService;
+import com.board.comment.service.CompositeService;
 import com.board.config.response.BaseException;
 import com.board.config.response.BaseResponse;
 import com.board.entity.Comment;
@@ -26,9 +27,12 @@ public class CommentController {
 
     private final MemberService memberService;
 
-    CommentController(CommentService commentService, MemberService memberService) {
+    private final CompositeService compositeService;
+
+    CommentController(CommentService commentService, MemberService memberService, CompositeService compositeService) {
         this.commentService = commentService;
         this.memberService = memberService;
+        this.compositeService = compositeService;
     }
 
     @GetMapping
@@ -57,7 +61,7 @@ public class CommentController {
             member.setPassword(guestDto.getPassword());
         }
 
-        commentService.addCommentDtl(commentAddDto, member);
+        compositeService.addCommentDtl(commentAddDto, member);
     }
 
     @PutMapping(value="/{commentId}")
@@ -103,6 +107,6 @@ public class CommentController {
             member.setPassword(guestDto.getPassword());
         }
 
-        commentService.deleteCommentDtl(boardId, postId, commentId, member);
+        compositeService.deleteCommentDtl(boardId, postId, commentId, member);
     }
 }

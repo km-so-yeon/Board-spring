@@ -22,4 +22,8 @@ public interface PostService {
     void modifyPostDtl(PostModifyDto postModifyDto, Member member);
 
     void deletePostDtl(int boardId, int postId, Member member);
+
+    void plusPostCommentCnt(int boardId, int postId);
+
+    void subtractPostCommentCnt(int boardId, int postId);
 }

@@ -109,5 +109,14 @@ public class PostServiceImpl implements PostService {
         postMapper.deletePost(boardId, postId, member.getMemberId());
     }
 
+    @Override
+    public void plusPostCommentCnt(int boardId, int postId) {
+        postMapper.plusPostCommentCnt(boardId, postId);
+    }
+
+    @Override
+    public void subtractPostCommentCnt(int boardId, int postId) {
+        postMapper.subtractPostCommentCnt(boardId, postId);
+    }
 
 }
