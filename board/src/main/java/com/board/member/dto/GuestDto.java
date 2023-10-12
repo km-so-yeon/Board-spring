@@ -18,4 +18,9 @@ public class GuestDto {
 
         return false;
     }
+
+    public GuestDto(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 }
