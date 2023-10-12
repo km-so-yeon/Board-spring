@@ -1,7 +1,7 @@
 package com.board.controller;
 
-import com.board.config.response.BaseException;
-import com.board.config.response.BaseResponse;
+import com.board.config.exception.BaseException;
+import com.board.config.exception.IsBlankException;
 import com.board.entity.Member;
 import com.board.entity.Post;
 import com.board.member.dto.GuestDto;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 import static com.board.constant.BaseStatus.GUEST_IS_BLANK;
 
@@ -53,11 +52,10 @@ public class PostController {
         // 회원정보가 없을 경우
         if(!member.isExist()) {
             if(guestDto.isEmpty()) {
-                throw new BaseException(GUEST_IS_BLANK);
+                throw new IsBlankException(GUEST_IS_BLANK);
             }
 
-            member.setEmail(guestDto.getEmail());
-            member.setPassword(guestDto.getPassword());
+            member.setGuestDtl(guestDto);
         }
 
         postService.addPostDtl(postDto, member);
@@ -75,11 +73,10 @@ public class PostController {
         if(!member.isExist()) {
             // 비회원 이메일 및 비밀번호가 없을 경우
             if(guestDto.isEmpty()) {
-                throw new BaseException(GUEST_IS_BLANK);
+                throw new IsBlankException(GUEST_IS_BLANK);
             }
 
-            member.setEmail(guestDto.getEmail());
-            member.setPassword(guestDto.getPassword());
+            member.setGuestDtl(guestDto);
         }
 
         postService.modifyPostDtl(postModifyDto, member);
@@ -98,11 +95,10 @@ public class PostController {
         if(!member.isExist()) {
             // 비회원 이메일 및 비밀번호가 없을 경우
             if(guestDto.isEmpty()) {
-                throw new BaseException(GUEST_IS_BLANK);
+                throw new IsBlankException(GUEST_IS_BLANK);
             }
 
-            member.setEmail(guestDto.getEmail());
-            member.setPassword(guestDto.getPassword());
+            member.setGuestDtl(guestDto);
         }
 
         postService.deletePostDtl(boardId, postId, member);

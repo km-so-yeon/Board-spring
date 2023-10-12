@@ -18,7 +18,6 @@ public class HomeController {
     HomeController(BoardService boardService) {
         this.boardService = boardService;
     }
-
     @GetMapping(value="/")
     public List<Board> main(HttpSession session, HttpServletRequest request) {
         return boardService.getBoardList(session, request);

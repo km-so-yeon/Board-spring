@@ -1,7 +1,10 @@
 package com.board.post.service.impl;
 
 import com.board.board.service.BoardService;
-import com.board.config.response.BaseException;
+import com.board.config.exception.BaseException;
+import com.board.config.exception.NotExistException;
+import com.board.config.exception.NotMatchException;
+import com.board.config.exception.NotPermitException;
 import com.board.entity.Member;
 import com.board.entity.Post;
 import com.board.post.dto.PostCreatedByDto;
@@ -44,7 +47,7 @@ public class PostServiceImpl implements PostService {
 
         // 권한 확인하기
         if(boardService.haveBoardPermission(boardId, member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
+            throw new NotPermitException(BOARD_NOT_PERMIT);
         }
 
         // 조회수 올리기
@@ -61,7 +64,7 @@ public class PostServiceImpl implements PostService {
 
         // 권한 확인하기
         if(boardService.haveBoardPermission(postDto.getBoardId(), member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
+            throw new NotPermitException(BOARD_NOT_PERMIT);
         }
 
         postMapper.insertPost(postDto, member.getMemberId());
@@ -73,16 +76,16 @@ public class PostServiceImpl implements PostService {
 
         // 권한 확인하기
         if(boardService.haveBoardPermission(postModifyDto.getBoardId(), member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
+            throw new NotPermitException(BOARD_NOT_PERMIT);
         }
 
         // 게시글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
         PostCreatedByDto postCreatedByDto = postMapper.selectPostCreatedBy(postModifyDto.getBoardId(), postModifyDto.getPostId());
         if(postCreatedByDto == null) {
-            throw new BaseException(POST_NON_EXIST);
+            throw new NotExistException(POST_NOT_EXIST);
         }
         if(!postCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
-            throw new BaseException(POST_CREATED_BY_NOT_MATCH);
+            throw new NotMatchException(POST_CREATED_BY_NOT_MATCH);
         }
 
         postMapper.updatePost(postModifyDto, member.getMemberId());
@@ -94,16 +97,16 @@ public class PostServiceImpl implements PostService {
 
         // 권한 확인하기
         if(boardService.haveBoardPermission(boardId, member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
+            throw new NotPermitException(BOARD_NOT_PERMIT);
         }
 
         // 게시글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
         PostCreatedByDto postCreatedByDto = postMapper.selectPostCreatedBy(boardId, postId);
         if(postCreatedByDto == null) {
-            throw new BaseException(POST_NON_EXIST);
+            throw new NotExistException(POST_NOT_EXIST);
         }
         if(!postCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
-            throw new BaseException(POST_CREATED_BY_NOT_MATCH);
+            throw new NotMatchException(POST_CREATED_BY_NOT_MATCH);
         }
 
         postMapper.deletePost(boardId, postId, member.getMemberId());

@@ -1,4 +1,4 @@
-package com.board.config.response;
+package com.board.config.exception;
 
 import com.board.constant.BaseStatus;
 

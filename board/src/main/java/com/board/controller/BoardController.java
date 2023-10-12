@@ -20,6 +20,11 @@ public class BoardController {
         this.postService = postService;
     }
 
+    /**
+     * 게시판 조회
+     * @param boardId
+     * @return 해당 게시판의 게시물 목록
+     */
     @GetMapping
     public List<Post> getPostList(@PathVariable("boardId") int boardId) {
         return postService.getPostList(boardId);

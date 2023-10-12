@@ -1,8 +1,12 @@
 package com.board.member.service.impl;
 
 
-import com.board.config.response.BaseException;
+import com.board.config.exception.BaseException;
 import static com.board.constant.BaseStatus.*;
+
+import com.board.config.exception.DuplicateDataException;
+import com.board.config.exception.NotExistException;
+import com.board.config.exception.NotMatchException;
 import com.board.entity.Member;
 import com.board.member.dto.MemberLoginDto;
 import com.board.member.dto.MemberSignUpDto;
@@ -33,13 +37,13 @@ public class MemberServiceImpl implements MemberService {
         // 같은 이메일의 회원이 존재하는지 확인
         if (memberMapper.selectMemberByEmail(memberSignUpDto.getEmail()) != null) {
             // exception 이미 등록된 회원입니다
-            throw new BaseException(MEMBER_DUPLICATE_EMAIL);
+            throw new DuplicateDataException(MEMBER_DUPLICATE_EMAIL);
         }
         // 같은 IP의 회원이 존재하는지 확인
         String clientIp = this.getClientIp(request);
         if (memberMapper.selectMemberByIp(clientIp) != null) {
             // exception 이미 등록된 회원입니다
-            throw new BaseException(MEMBER_DUPLICATE_IP);
+            throw new DuplicateDataException(MEMBER_DUPLICATE_IP);
         }
 
         // ip 설정
@@ -58,11 +62,11 @@ public class MemberServiceImpl implements MemberService {
 
         if(member == null) {
             // exception 존재하지 않는 회원입니다
-            throw new BaseException(MEMBER_NON_EXIST);
+            throw new NotExistException(MEMBER_NOT_EXIST);
         }
         if(!member.getPassword().equals(memberLoginDto.getPassword())) {
             // exception 비밀번호가 틀립니다
-            throw new BaseException(MEMBER_PASSWORD_WORNG);
+            throw new NotMatchException(MEMBER_PASSWORD_WRONG);
         }
         member.clearPassword(); // 비밀번호 제거 후 리턴
 

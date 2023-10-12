@@ -4,13 +4,12 @@ import com.board.comment.dto.CommentAddDto;
 import com.board.comment.dto.CommentModifyDto;
 import com.board.comment.service.CommentService;
 import com.board.comment.service.CompositeService;
-import com.board.config.response.BaseException;
-import com.board.config.response.BaseResponse;
+import com.board.config.exception.BaseException;
+import com.board.config.exception.IsBlankException;
 import com.board.entity.Comment;
 import com.board.entity.Member;
 import com.board.member.dto.GuestDto;
 import com.board.member.service.MemberService;
-import com.board.post.dto.PostDto;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +34,12 @@ public class CommentController {
         this.compositeService = compositeService;
     }
 
+    /**
+     * 댓글 목록 조회
+     * @param boardId
+     * @param postId
+     * @return 댓글 목록
+     */
     @GetMapping
     public ArrayList<Comment> getCommentList(@PathVariable("boardId")int boardId
                                                          , @PathVariable("postId")int postId) {
@@ -42,6 +47,13 @@ public class CommentController {
         return commentService.getCommentList(boardId, postId);
     }
 
+    /**
+     * 댓글 추가
+     * @param commentAddDto
+     * @param guestDto
+     * @param session
+     * @param request
+     */
     @PostMapping
     public void addCommentDtl(@RequestBody CommentAddDto commentAddDto
                                             , @RequestBody GuestDto guestDto
@@ -54,16 +66,22 @@ public class CommentController {
         if(!member.isExist()) {
             // 비회원 이메일 및 비밀번호가 없을 경우
             if(guestDto.isEmpty()) {
-                throw new BaseException(GUEST_IS_BLANK);
+                throw new IsBlankException(GUEST_IS_BLANK);
             }
 
-            member.setEmail(guestDto.getEmail());
-            member.setPassword(guestDto.getPassword());
+            member.setGuestDtl(guestDto);
         }
 
         compositeService.addCommentDtl(commentAddDto, member);
     }
 
+    /**
+     * 댓글 수정
+     * @param commentModifyDto
+     * @param guestDto
+     * @param session
+     * @param request
+     */
     @PutMapping(value="/{commentId}")
     public void updateCommentDtl(@RequestBody CommentModifyDto commentModifyDto
                                                , @RequestBody GuestDto guestDto
@@ -76,16 +94,24 @@ public class CommentController {
         if(!member.isExist()) {
             // 비회원 이메일 및 비밀번호가 없을 경우
             if(guestDto.isEmpty()) {
-                throw new BaseException(GUEST_IS_BLANK);
+                throw new IsBlankException(GUEST_IS_BLANK);
             }
 
-            member.setEmail(guestDto.getEmail());
-            member.setPassword(guestDto.getPassword());
+            member.setGuestDtl(guestDto);
         }
 
         compositeService.modifyCommentDtl(commentModifyDto, member);
     }
 
+    /**
+     * 댓글 삭제
+     * @param boardId
+     * @param postId
+     * @param commentId
+     * @param guestDto
+     * @param session
+     * @param request
+     */
     @DeleteMapping(value="/{commentId}")
     public void deleteCommentDtl(@PathVariable("boardId") int boardId
                                                , @PathVariable("postId") int postId
@@ -100,11 +126,10 @@ public class CommentController {
         if(!member.isExist()) {
             // 비회원 이메일 및 비밀번호가 없을 경우
             if(guestDto.isEmpty()) {
-                throw new BaseException(GUEST_IS_BLANK);
+                throw new IsBlankException(GUEST_IS_BLANK);
             }
 
-            member.setEmail(guestDto.getEmail());
-            member.setPassword(guestDto.getPassword());
+            member.setGuestDtl(guestDto);
         }
 
         compositeService.deleteCommentDtl(boardId, postId, commentId, member);

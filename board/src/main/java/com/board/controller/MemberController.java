@@ -1,7 +1,6 @@
 package com.board.controller;
 
-import com.board.config.response.BaseException;
-import com.board.config.response.BaseResponse;
+import com.board.config.exception.BaseException;
 import com.board.entity.Member;
 import com.board.member.dto.MemberLoginDto;
 import com.board.member.dto.MemberSignUpDto;

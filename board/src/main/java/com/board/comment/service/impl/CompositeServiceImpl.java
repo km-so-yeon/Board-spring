@@ -6,7 +6,9 @@ import com.board.comment.dto.CommentCreatedByDto;
 import com.board.comment.dto.CommentModifyDto;
 import com.board.comment.mapper.CommentMapper;
 import com.board.comment.service.CompositeService;
-import com.board.config.response.BaseException;
+import com.board.config.exception.NotExistException;
+import com.board.config.exception.NotMatchException;
+import com.board.config.exception.NotPermitException;
 import com.board.entity.Member;
 import com.board.post.service.PostService;
 import org.springframework.stereotype.Service;
@@ -40,7 +42,7 @@ public class CompositeServiceImpl implements CompositeService {
 
         // 권한 확인하기
         if(boardService.haveBoardPermission(commentAddDto.getBoardId(), member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
+            throw new NotPermitException(BOARD_NOT_PERMIT);
         }
 
         // 댓글 수 추가하기
@@ -55,16 +57,16 @@ public class CompositeServiceImpl implements CompositeService {
 
         // 권한 확인하기
         if(boardService.haveBoardPermission(commentModifyDto.getBoardId(), member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
+            throw new NotPermitException(BOARD_NOT_PERMIT);
         }
 
         // 댓글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
         CommentCreatedByDto commentCreatedByDto = commentMapper.selectCommentCreatedBy(commentModifyDto.getPostId(), commentModifyDto.getCommentId());
         if(commentCreatedByDto == null) {
-            throw new BaseException(COMMENT_NON_EXIST);
+            throw new NotExistException(COMMENT_NOT_EXIST);
         }
         if(!commentCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
-            throw new BaseException(COMMENT_CREATED_BY_NOT_MATCH);
+            throw new NotMatchException(COMMENT_CREATED_BY_NOT_MATCH);
         }
 
         commentMapper.updateComment(commentModifyDto, member.getMemberId());
@@ -76,16 +78,16 @@ public class CompositeServiceImpl implements CompositeService {
 
         // 권한 확인하기
         if(boardService.haveBoardPermission(boardId, member)) {
-            throw new BaseException(BOARD_NOT_PERMISSION);
+            throw new NotPermitException(BOARD_NOT_PERMIT);
         }
 
         // 댓글의 작성자 정보와 넘어온 회원 정보가 일치하는지 확인
         CommentCreatedByDto commentCreatedByDto = commentMapper.selectCommentCreatedBy(postId, commentId);
         if(commentCreatedByDto == null) {
-            throw new BaseException(COMMENT_NON_EXIST);
+            throw new NotExistException(COMMENT_NOT_EXIST);
         }
         if(!commentCreatedByDto.isMatch(member.getEmail(), member.getPassword())) {
-            throw new BaseException(COMMENT_CREATED_BY_NOT_MATCH);
+            throw new NotMatchException(COMMENT_CREATED_BY_NOT_MATCH);
         }
 
         // 댓글 수 빼기

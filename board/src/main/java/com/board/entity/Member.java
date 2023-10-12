@@ -1,5 +1,7 @@
 package com.board.entity;
 
+import com.board.member.dto.GuestDto;
+
 import java.util.Date;
 
 public class Member {
@@ -42,13 +44,16 @@ public class Member {
 
     public void clearPassword() { this.password = null; }
 
-    public void setEmail(String email) { this.email = email; }
-
-    public void setPassword(String password) { this.password = password; }
-
     public boolean isExist() {
         // 멤버Id가 0이면 존재하지 않는 사용자이다.
-        if(this.memberId == 0) return false;
+        if(this.memberId == 0) {
+            return false;
+        }
         return true;
+    }
+
+    public void setGuestDtl(GuestDto guestDto) {
+        this.email = guestDto.getEmail();
+        this.password = guestDto.getPassword();
     }
 }
