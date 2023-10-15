@@ -1,5 +1,6 @@
 package com.board.controller;
 
+import com.board.comment.dto.CommentAddDto;
 import com.board.comment.dto.CommentModifyDto;
 import com.board.comment.service.CommentService;
 import com.board.comment.service.CompositeService;
@@ -85,11 +86,11 @@ class CommentControllerTest {
     @DisplayName("댓글 추가")
     void 댓글_추가() throws Exception{
 
-        PostDto postDto = getPostDto();
+        CommentAddDto commentAddDto = getCommentAddDto();
         GuestDto guestDto = getGuestDto();
 
         Map<String, Object> input = new HashMap<>();
-        input.put("postDto", postDto);
+        input.put("commentAddDto", commentAddDto);
         input.put("guestDto", guestDto);
 
         mockMvc.perform(
@@ -149,9 +150,8 @@ class CommentControllerTest {
     }
 
 
-    private PostDto getPostDto() {
-        return new PostDto.Builder(boardId)
-                .title("댓글 제목")
+    private CommentAddDto getCommentAddDto() {
+        return new CommentAddDto.Builder(boardId, postId)
                 .content("댓글 내용")
                 .build();
     }
@@ -161,6 +161,8 @@ class CommentControllerTest {
     }
 
     private CommentModifyDto getCommentModifyDto() {
-        return null;
+        return new CommentModifyDto.Builder(boardId, postId, commentId)
+                .content("댓글 내용")
+                .build();
     }
 }
