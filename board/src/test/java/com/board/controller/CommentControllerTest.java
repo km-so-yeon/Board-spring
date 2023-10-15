@@ -1,5 +1,6 @@
 package com.board.controller;
 
+import com.board.comment.dto.CommentModifyDto;
 import com.board.comment.service.CommentService;
 import com.board.comment.service.CompositeService;
 import com.board.member.dto.GuestDto;
@@ -55,6 +56,7 @@ class CommentControllerTest {
 
     int boardId;
     int postId;
+    int commentId;
 
     @BeforeEach
     void beforeEach() {
@@ -63,6 +65,7 @@ class CommentControllerTest {
 
         boardId = 1;
         postId = 1;
+        commentId = 1;
     }
 
     @Test
@@ -91,7 +94,7 @@ class CommentControllerTest {
 
         mockMvc.perform(
                         MockMvcRequestBuilders
-                                .post("/boards/{boardId}/posts", boardId)
+                                .post("/boards/{boardId}/posts/{postId}/comments", boardId, postId)
                                 .contentType(MediaType.APPLICATION_JSON)    // json으로 보낸다고 명시
                                 .content(objectMapper.writeValueAsString(input))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -105,16 +108,16 @@ class CommentControllerTest {
     @DisplayName("댓글 수정")
     void 댓글_수정() throws Exception{
 
-        PostModifyDto postModifyDto = getPostModifyDto();
+        CommentModifyDto commentModifyDto = getCommentModifyDto();
         GuestDto guestDto = getGuestDto();
 
         Map<String, Object> input = new HashMap<>();
-        input.put("postModifyDto", postModifyDto);
+        input.put("commentModifyDto", commentModifyDto);
         input.put("guestDto", guestDto);
 
         mockMvc.perform(
                         MockMvcRequestBuilders
-                                .put("/boards/{boardId}/posts/{postId}", boardId, postId)
+                                .put("/boards/{boardId}/posts/{postId}/comments/{commentId}", boardId, postId)
                                 .contentType(MediaType.APPLICATION_JSON)    // json으로 보낸다고 명시
                                 .content(objectMapper.writeValueAsString(input))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -135,7 +138,7 @@ class CommentControllerTest {
 
         mockMvc.perform(
                         MockMvcRequestBuilders
-                                .delete("/boards/{boardId}/posts/{postId}", boardId, postId)
+                                .delete("/boards/{boardId}/posts/{postId}/comments/{commentId}", boardId, postId, commentId)
                                 .contentType(MediaType.APPLICATION_JSON)    // json으로 보낸다고 명시
                                 .content(objectMapper.writeValueAsString(input))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -157,10 +160,7 @@ class CommentControllerTest {
         return new GuestDto("user2@gmail.com", "1234");
     }
 
-    private PostModifyDto getPostModifyDto() {
-        return new PostModifyDto.Builder(boardId, postId)
-                .title("댓글 제목")
-                .content("댓글 내용")
-                .build();
+    private CommentModifyDto getCommentModifyDto() {
+        return null;
     }
 }

@@ -7,7 +7,7 @@
              , b.board_nm
              , b.created_at
              , m1.nickname as created_by_nm
-             , updated_at
+             , b.updated_at
              , m2.nickname as updated_by_nm
              , role_id
           FROM board b

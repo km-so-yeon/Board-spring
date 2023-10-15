@@ -37,6 +37,8 @@ public class PostDto {
         }
     }
 
+    public PostDto() {}
+
     private PostDto(Builder builder) {
         boardId = builder.boardId;
         title   = builder.title;

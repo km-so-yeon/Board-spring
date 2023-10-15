@@ -62,8 +62,8 @@ class BoardControllerTest {
     }
 
     @Test
-    @DisplayName("게시판 조회")
-    void 게시판_조회() throws Exception{
+    @DisplayName("게시물 목록 조회")
+    void 게시물_목록_조회() throws Exception{
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/boards/{boardId}", boardId)

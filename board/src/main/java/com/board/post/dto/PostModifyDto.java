@@ -43,6 +43,8 @@ public class PostModifyDto {
         }
     }
 
+    public PostModifyDto() {}
+
     private PostModifyDto(Builder builder) {
         this.boardId = builder.boardId;
         this.postId = builder.postId;

@@ -10,4 +10,13 @@ public class MemberLoginDto {
 
     public String getPassword() { return this.password; }
 
+    public MemberLoginDto() {
+
+    }
+
+    public MemberLoginDto(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
 }
