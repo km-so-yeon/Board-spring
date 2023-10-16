@@ -41,8 +41,9 @@ public class CommentController {
      * @return 댓글 목록
      */
     @GetMapping
-    public ArrayList<Comment> getCommentList(@PathVariable("boardId")int boardId
-                                                         , @PathVariable("postId")int postId) {
+    public ArrayList<Comment> getCommentList(
+            @PathVariable("boardId")int boardId
+            , @PathVariable("postId")int postId) {
         // TODO 댓글 페이징 처리
         return commentService.getCommentList(boardId, postId);
     }
@@ -55,9 +56,10 @@ public class CommentController {
      * @param request
      */
     @PostMapping
-    public void addCommentDtl(@RequestBody CommentAddDto commentAddDto
-                                            , @RequestBody GuestDto guestDto
-                                            , HttpSession session, HttpServletRequest request) {
+    public void addCommentDtl(
+            @RequestBody CommentAddDto commentAddDto
+            , @RequestBody GuestDto guestDto
+            , HttpSession session, HttpServletRequest request) {
 
         // 회원 정보가 있는지 확인
         Member member = memberService.getMemberInfo(session, request);
@@ -83,9 +85,10 @@ public class CommentController {
      * @param request
      */
     @PutMapping(value="/{commentId}")
-    public void updateCommentDtl(@RequestBody CommentModifyDto commentModifyDto
-                                               , @RequestBody GuestDto guestDto
-                                               , HttpSession session, HttpServletRequest request) {
+    public void updateCommentDtl(
+            @RequestBody CommentModifyDto commentModifyDto
+            , @RequestBody GuestDto guestDto
+            , HttpSession session, HttpServletRequest request) {
 
         // 회원 정보가 있는지 확인
         Member member = memberService.getMemberInfo(session, request);
@@ -113,11 +116,12 @@ public class CommentController {
      * @param request
      */
     @DeleteMapping(value="/{commentId}")
-    public void deleteCommentDtl(@PathVariable("boardId") int boardId
-                                               , @PathVariable("postId") int postId
-                                               , @PathVariable("commentId") int commentId
-                                               , @RequestBody GuestDto guestDto
-                                               , HttpSession session, HttpServletRequest request) {
+    public void deleteCommentDtl(
+            @PathVariable("boardId") int boardId
+            , @PathVariable("postId") int postId
+            , @PathVariable("commentId") int commentId
+            , @RequestBody GuestDto guestDto
+            , HttpSession session, HttpServletRequest request) {
 
         // 회원 정보가 있는지 확인
         Member member = memberService.getMemberInfo(session, request);

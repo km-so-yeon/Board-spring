@@ -5,6 +5,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -30,6 +31,7 @@ public class SuccessResponseAdvisor<T> implements ResponseBodyAdvice<T> {
 //            return new BaseResponse(baseException);
 //        }
 
+        //return ResponseEntity.ok().body(new BaseResponse<>(body));
         return new BaseResponse(body);
     }
 }

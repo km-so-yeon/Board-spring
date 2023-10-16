@@ -22,12 +22,20 @@ public class BaseResponse<T> {
         this.result = result;
     }
 
-    // POST, PUT, DELETE 요청 성공했을 때 및 요청 실패했을 때
+    // POST, PUT, DELETE 요청 성공했을 때
     public BaseResponse(BaseStatus status) {
         this.isSuccess = status.isSuccess();
         this.code = status.getCode();
         this.message = status.getMessage();
         this.result = null;
+    }
+
+    // 요청 실패했을 때
+    public BaseResponse(BaseStatus status, T result) {
+        this.isSuccess = status.isSuccess();
+        this.code = status.getCode();
+        this.message = status.getMessage();
+        this.result = result;
     }
 
     public Boolean getIsSuccess() { return this.isSuccess; }
