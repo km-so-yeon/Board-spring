@@ -32,7 +32,6 @@ import static com.board.constant.BaseStatus.INTERNAL_SERVER_ERROR;
  * - 일관적인 에러응답 처리
  */
 @RestControllerAdvice(basePackages = "com.board.controller")
-@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ExceptionAdvisor extends ResponseEntityExceptionHandler {
 
     private final Logger logger;
@@ -67,6 +66,7 @@ public class ExceptionAdvisor extends ResponseEntityExceptionHandler {
 
     /**
      * - HttpRequestMethodNotSupportedException 발생 시 default 에러 객체를 내보내는 현상 해결
+     * - Spring에서 발생시키는 Error들 처리
      * - ResponseEntityExceptionHandler 상속받아서 구현
      * @param ex the exception
      * @param headers the headers to be written to the response
