@@ -63,6 +63,7 @@ public class JwtTokenProvider {
         try {
             subjectStr = objectMapper.writeValueAsString(subject);
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             throw new BaseException(INTERNAL_SERVER_ERROR);
         }
 
@@ -124,6 +125,7 @@ public class JwtTokenProvider {
         try {
             subject = objectMapper.readValue(subjectStr, Subject.class);
         } catch (JsonProcessingException e) {
+            e.printStackTrace();
             throw new BaseException(INTERNAL_SERVER_ERROR);
         }
         return subject;

@@ -28,12 +28,10 @@ public class SuccessResponseAdvisor<T> implements ResponseBodyAdvice<T> {
 
         if(body instanceof BaseException) {
             BaseException baseException = (BaseException) body;
-            System.out.println("****** Exception Resonse *****");
             //return new BaseResponse(baseException);
         }
 
-        System.out.println("**** ResponseAdvisor " + body.getClass());
         //return ResponseEntity.ok().body(new BaseResponse<>(body));
-        return new BaseResponse(body);
+        return new BaseResponse<>(body);
     }
 }

@@ -11,7 +11,13 @@ public class Subject {
 
     private final String type;
 
-    private Subject(int memberId, String email, String type) {
+    public Subject() {
+        this.memberId = 0;
+        this.email = null;
+        this.type = null;
+    }
+
+    public Subject(int memberId, String email, String type) {
         this.memberId = memberId;
         this.email = email;
         this.type = type;
