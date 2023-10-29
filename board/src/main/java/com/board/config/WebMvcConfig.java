@@ -16,7 +16,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     public void addInterceptors(InterceptorRegistry registry) {
         // home, post, comment Controller에서 요청 시 request로부터 token 추출
-        registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/", "/post/**", "/comment/**");
+        // aop로 대체
+        //registry.addInterceptor(bearerAuthInterceptor).addPathPatterns("/", "/post/**", "/comment/**");
     }
 
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.board.token.mapper.TokenMapper">
+
+    <insert id="insertToken">
+        INSERT
+          INTO token
+             (
+               member_id
+             , access_token
+             , access_expire_at
+             , refresh_token
+             , refresh_expire_at
+             )
+        VALUES
+             (
+               #{memberId}
+             , #{accessToken}
+             , #{accessExpireAt}
+             , #{refreshToken}
+             , #{refreshExpireAt}
+             )
+        ON DUPLICATE KEY
+        UPDATE member_id = #{memberId}
+    </insert>
+
+    <update id="updateAccessToken">
+        UPDATE token
+           SET access_token = #{accessToken}
+             , access_expire_at = #{accessExpireAt}
+         WHERE member_id = #{memberId}
+    </update>
+
+    <select id="selectRtkByMemberEmail" parameterType="String" resultType="String">
+        SELECT t.refresh_token
+          FROM token t
+               INNER JOIN member m
+                       ON m.member_id = t.member_id
+         WHERE m.email = #{email}
+    </select>
+
+    <delete id="deleteToken" parameterType="String">
+        DELETE FROM token
+         WHERE access_token = #{accessToken}
+    </delete>
+
+</mapper>

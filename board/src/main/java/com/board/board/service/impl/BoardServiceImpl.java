@@ -27,7 +27,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(rollbackFor = Exception.class)
     public List<Board> getBoardList(HttpSession session, HttpServletRequest request) {
 
         // 권한에 따라 가져오는 게시판 리스트가 다르다.

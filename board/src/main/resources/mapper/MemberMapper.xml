@@ -36,17 +36,18 @@
              )
     </insert>
 
-    <select id="selectMemberById" parameterType="int" resultType="Member">
+    <select id="selectMemberByIp" parameterType="String" resultType="Member">
         SELECT member_id
              , email
              , password
              , nickname
+             , ip
              , created_at
              , updated_at
              , leave_at
              , role_id
           FROM member
-         WHERE member_id = #{memberId}
+         WHERE ip = #{ip}
     </select>
 
     <insert id="insertGuest" parameterType="String">

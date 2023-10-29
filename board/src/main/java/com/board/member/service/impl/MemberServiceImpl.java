@@ -7,7 +7,7 @@ import com.board.config.exception.*;
 
 import static com.board.constant.BaseStatus.*;
 
-import com.board.config.redis.RedisDao;
+import com.board.config.auth.redis.RedisDao;
 import com.board.entity.Member;
 import com.board.entity.Subject;
 import com.board.member.dto.MemberLoginDto;
@@ -16,7 +16,6 @@ import com.board.member.mapper.MemberMapper;
 import com.board.member.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.el.parser.Token;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -71,7 +70,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(rollbackFor = Exception.class)git
     public TokenResponse login(MemberLoginDto memberLoginDto) throws BaseException {
 
         // 회원 이메일, 비밀번호 확인
@@ -91,6 +90,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public TokenResponse reissue(MemberLoginDto memberLoginDto) throws BaseException {
         // 회원 정보 가져오기
         Member member = memberMapper.selectMemberByEmail(memberLoginDto.getEmail());
@@ -126,12 +126,8 @@ public class MemberServiceImpl implements MemberService {
 
         try {
             String subjectStr = (String) request.getAttribute("subject");
-            Subject subject = objectMapper.readValue(subjectStr, Subject.class);
-            String email = subject.getEmail();
-            if(email.isEmpty()) {
-                member = memberMapper.selectMemberByEmail(email);
 
-            } else {
+            if(subjectStr == null) {
                 // 비회원일 때
                 String ip = this.getClientIp(request);
                 member = memberMapper.selectMemberByIp(ip);
@@ -141,6 +137,11 @@ public class MemberServiceImpl implements MemberService {
                     member = memberMapper.selectMemberByIp(ip);
                 }
 
+            } else {
+                // 회원일 때
+                Subject subject = objectMapper.readValue(subjectStr, Subject.class);
+                String email = subject.getEmail();
+                member = memberMapper.selectMemberByEmail(email);
             }
         } catch (JsonProcessingException e) {
             throw new NotPermitException(INVALID_TOKEN);
@@ -171,15 +172,12 @@ public class MemberServiceImpl implements MemberService {
                 break;
             }
         }
-
         return clientIp;
     }
 
     @Override
     public void logout(String atk) throws BaseException{
-        Subject subject = jwtTokenProvider.getSubject(atk);
-        // Redis에서 해당 이메일의 토큰 삭제하기
-        redisDao.deleteValues(subject.getEmail());
+        jwtTokenProvider.deleteToken(atk);
     }
 
 }

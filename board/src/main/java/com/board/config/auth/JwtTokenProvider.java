@@ -1,8 +1,10 @@
 package com.board.config.auth;
 
+import com.board.token.dto.TokenDto;
+import com.board.token.service.TokenService;
 import com.board.config.exception.BaseException;
+import com.board.config.auth.redis.RedisDao;
 import com.board.config.exception.NotPermitException;
-import com.board.config.redis.RedisDao;
 import com.board.entity.Member;
 import com.board.entity.Subject;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Objects;
@@ -40,11 +41,16 @@ public class JwtTokenProvider {
 
     private final RedisDao redisDao;
 
+    private final TokenService tokenService;
+
     private final ObjectMapper objectMapper;
 
-    public JwtTokenProvider(RedisDao redisDao, ObjectMapper objectMapper) {
+    public JwtTokenProvider(RedisDao redisDao
+            , ObjectMapper objectMapper
+            , TokenService tokenService) {
         this.redisDao = redisDao;
         this.objectMapper = objectMapper;
+        this.tokenService = tokenService;
     }
 
     // 객체 초기화, secretKey를 Base64로 인코딩한다.
@@ -85,6 +91,19 @@ public class JwtTokenProvider {
      * @return
      * @throws JsonProcessingException
      */
+// redis 기반
+//    public TokenResponse createTokenByLogin(Member member) throws BaseException {
+//        // AccessToken, RefreshToken 발급
+//        Subject atkSubject = Subject.atk(member.getMemberId(), member.getEmail());
+//        Subject rtkSubject = Subject.rtk(member.getMemberId(), member.getEmail());
+//
+//        String atk = createToken(atkSubject, atkLiveTime);
+//        String rtk = createToken(rtkSubject, rtkLiveTime);
+//
+//        // Redis에 RefreshToken 저장
+//        redisDao.setValues(member.getEmail(), rtk, Duration.ofMillis(rtkLiveTime));
+//        return new TokenResponse(atk, rtk);
+//    }
     public TokenResponse createTokenByLogin(Member member) throws BaseException {
         // AccessToken, RefreshToken 발급
         Subject atkSubject = Subject.atk(member.getMemberId(), member.getEmail());
@@ -93,8 +112,10 @@ public class JwtTokenProvider {
         String atk = createToken(atkSubject, atkLiveTime);
         String rtk = createToken(rtkSubject, rtkLiveTime);
 
-        // Redis에 RefreshToken 저장
-        redisDao.setValues(member.getEmail(), rtk, Duration.ofMillis(rtkLiveTime));
+        Date now = new Date();
+        TokenDto tokenDto = new TokenDto(member.getMemberId(), atk, atkLiveTime, rtk, rtkLiveTime);
+        // DB에 RefreshToken 저장
+        tokenService.insertToken(tokenDto);
         return new TokenResponse(atk, rtk);
     }
 
@@ -104,14 +125,29 @@ public class JwtTokenProvider {
      * @return
      * @throws JsonProcessingException
      */
+// redis 기반
+//    public TokenResponse reissueAtk(Member member) throws BaseException {
+//        String rtkInRedis = redisDao.getValues(member.getEmail());
+//        if(Objects.isNull(rtkInRedis)) throw new NotPermitException(INVALID_TOKEN);
+//
+//        // 멤버 정보를 기반으로 AccessToken 재발급
+//        Subject atkSubject = Subject.atk(member.getMemberId(), member.getEmail());
+//        String atk = createToken(atkSubject, atkLiveTime);
+//        return new TokenResponse(atk, null);
+//    }
     public TokenResponse reissueAtk(Member member) throws BaseException {
-        String rtkInRedis = redisDao.getValues(member.getEmail());
-        if(Objects.isNull(rtkInRedis)) throw new NotPermitException(INVALID_TOKEN);
+        String rtk = tokenService.selectRtkByMemberEmail(member.getEmail());
+        if(Objects.isNull(rtk)) throw new NotPermitException(INVALID_TOKEN);
 
         // 멤버 정보를 기반으로 AccessToken 재발급
         Subject atkSubject = Subject.atk(member.getMemberId(), member.getEmail());
         String atk = createToken(atkSubject, atkLiveTime);
-        return new TokenResponse(atk, null);
+
+        // DB update
+        TokenDto tokenDto = new TokenDto(member.getMemberId(), atk, atkLiveTime, rtk, rtkLiveTime);
+        tokenService.updateAccessToken(tokenDto);
+
+        return new TokenResponse(atk, rtk);
     }
 
     /**
@@ -139,8 +175,8 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            // 유효 기간 지났으면 만료된 토큰이다.
             if(claims.getBody().getExpiration().before(new Date())) {
-                // 유효 기간 지났으면 만료된 토큰이다.
                 return false;
             }
 
@@ -149,6 +185,20 @@ public class JwtTokenProvider {
             e.printStackTrace();
             return false;
         }
+    }
+
+
+    /**
+     * 토큰 삭제하기(로그아웃)
+     * @param atk
+     */
+    public void deleteToken(String atk) {
+        // Redis에서 해당 이메일의 토큰 삭제하기
+        //Subject subject = this.getSubject(atk);
+        //redisDao.deleteValues(subject.getEmail());
+
+        // DB에서 해당 이메일의 토큰 삭제하기
+        tokenService.deleteToken(atk);
     }
 
 }
