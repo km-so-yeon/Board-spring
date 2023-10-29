@@ -70,7 +70,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)git
+    @Transactional(rollbackFor = Exception.class)
     public TokenResponse login(MemberLoginDto memberLoginDto) throws BaseException {
 
         // 회원 이메일, 비밀번호 확인
