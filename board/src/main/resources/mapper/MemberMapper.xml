@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.board.member.mapper.MemberMapper">
+
+    <select id="selectMemberByEmail" resultType="Member">
+        SELECT member_id
+             , email
+             , password
+             , nickname
+             , ip
+             , created_at
+             , updated_at
+             , leave_at
+             , role_id
+          FROM member
+         WHERE email = #{email}
+    </select>
+
+    <insert id="insertMember" parameterType="MemberSignUpDto">
+        INSERT
+          INTO member
+             (
+               email
+             , password
+             , nickname
+             , role_id
+             , ip
+             )
+        VALUES
+             (
+               #{email}
+             , #{password}
+             , #{nickname}
+             , #{roleId}
+             , #{ip}
+             )
+    </insert>
+
+    <select id="selectMemberByIp" parameterType="String" resultType="Member">
+        SELECT member_id
+             , email
+             , password
+             , nickname
+             , ip
+             , created_at
+             , updated_at
+             , leave_at
+             , role_id
+          FROM member
+         WHERE ip = #{ip}
+    </select>
+
+    <insert id="insertGuest" parameterType="String">
+        INSERT
+          INTO member
+             (
+               ip
+             , role_id
+             )
+        VALUES
+             (
+               #{ip}
+             , 1
+             )
+    </insert>
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.board.comment.mapper.CommentMapper">
+
+    <select id="selectCommentList" resultType="ArrayList">
+        SELECT c.comment_id
+             , c.post_id
+             , c.content
+             , c.use_yn
+             , c.created_at
+             , m.nickname as created_by_nm
+          FROM comment c
+               LEFT OUTER JOIN member m
+                            ON c.created_by = m.member_id
+        WHERE c.post_id = #{postId}
+    </select>
+
+    <insert id="insertComment">
+        INSERT
+          INTO comment
+             (
+               post_id
+             , content
+             , use_yn
+             , created_by
+             , updated_by
+             )
+        VALUES
+             (
+               #{commentAddDto.post_id}
+             , #{commentAddDto.content}
+             , 'Y'
+             , #{memberId}
+             , #{memberId}
+        )
+    </insert>
+
+    <select id="selectCommentCreatedBy" resultType="CommentCreatedByDto">
+        SELECT m.email
+             , m.password
+          FROM comment c
+               LEFT OUTER JOIN member m
+                            ON c.created_by = m.member_id
+         WHERE c.post_id = #{postId}
+           AND c.comment_id = #{commentId}
+    </select>
+
+    <update id="updateComment">
+        UPDATE comment
+           SET content = #{commentModifyDto.content}
+             , updated_at = now()
+             , updated_by = #{memberId}
+         WHERE post_id = #{commentModifyDto.postId}
+           AND comment_id = #{commentModifyDto.commentId}
+    </update>
+
+    <update id="deleteComment">
+        UPDATE comment
+           SET use_yn = 'N'
+             , update_at = now()
+             , update_by = #{memberId}
+         WHERE post_id = #{postId}
+           AND comment_id = #{commentId}
+    </update>
+</mapper>

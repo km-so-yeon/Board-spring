@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "//mybatis.org/DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.board.view.mapper.ViewMapper">
+
+    <select id="isExistViewPost" resultType="boolean">
+        SELECT IF(COUNT(*) > 0, 1, 0)
+          FROM view
+         WHERE view_cd = 'POST'
+           AND post_id = #{postId}
+           AND member_id = #{memberId}
+    </select>
+
+    <insert id="insertViewPost">
+        INSERT
+          INTO view
+             (
+               view_cd
+             , post_id
+             , member_id
+             )
+        VALUES
+             (
+               'POST'
+             , #{postId}
+             , #{memberId}
+             )
+    </insert>
+
+    <select id="isExistViewComment" resultType="boolean">
+        SELECT IF(COUNT(*) > 0, 1, 0)
+          FROM view
+         WHERE view_cd = 'COMMENT'
+           AND comment_id = #{commentId}
+           AND member_id = #{memberId}
+    </select>
+
+    <insert id="insertViewComment">
+        INSERT
+          INTO view
+             (
+               view_cd
+             , comment_id
+             , member_id
+             )
+        VALUES
+             (
+               'COMMENT'
+             , #{commentId}
+             , #{memberId}
+             )
+    </insert>
+
+</mapper>
